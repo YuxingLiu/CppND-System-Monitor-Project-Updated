@@ -14,15 +14,21 @@ using std::size_t;
 using std::string;
 using std::vector;
 
+
 System::System() {
     kernel_ = LinuxParser::Kernel();
     opsystem_ = LinuxParser::OperatingSystem();
+    vector<int> pids = LinuxParser::Pids();
+    for(int pid : pids) {
+        Process process(pid);
+        processes_.push_back(process);
+    }
 }
 
 // DONE: Return the system's CPU
 Processor& System::Cpu() { return cpu_; }
 
-// TODO: Return a container composed of the system's processes
+// DONE: Return a container composed of the system's processes
 vector<Process>& System::Processes() { return processes_; }
 
 // DONE: Return the system's kernel identifier (string)
