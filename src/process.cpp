@@ -24,7 +24,7 @@ float Process::CpuUtilization() {
     long uptime = LinuxParser::UpTime();
     long total_time = LinuxParser::ActiveJiffies(pid_);
     long elaps_time = uptime - UpTime();
-    cpu_usage_ = (float) total_time / (float) elaps_time * 100;
+    cpu_usage_ = (float) total_time / (float) elaps_time;
     return cpu_usage_;
 }
 
@@ -37,8 +37,8 @@ string Process::Ram() { return LinuxParser::Ram(pid_); }
 // DONE: Return the user (name) that generated this process
 string Process::User() { return user_; }
 
-// TODO: Return the age of this process (in seconds)
+// DONE: Return the age of this process (in seconds)
 long int Process::UpTime() { return LinuxParser::UpTime(pid_); }
 
-// TODO: Overload the "less than" comparison operator for Process objects
-bool Process::operator<(Process const& a) const { return cpu_usage_ < a.cpu_usage_; }
+// DONE: Overload the "less than" comparison operator for Process objects
+bool Process::operator<(Process const& a) const { return cpu_usage_ > a.cpu_usage_; }

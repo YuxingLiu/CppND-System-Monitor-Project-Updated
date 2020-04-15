@@ -3,6 +3,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 #include "process.h"
 #include "processor.h"
@@ -29,7 +30,10 @@ System::System() {
 Processor& System::Cpu() { return cpu_; }
 
 // DONE: Return a container composed of the system's processes
-vector<Process>& System::Processes() { return processes_; }
+vector<Process>& System::Processes() {
+    std::sort(processes_.begin(), processes_.end());
+    return processes_;
+}
 
 // DONE: Return the system's kernel identifier (string)
 std::string System::Kernel() { return kernel_; }
