@@ -16,10 +16,10 @@ Process::Process(int pid) : pid_(pid) {
     cmd_ = LinuxParser::Command(pid);
 }
 
-// DONE: Return this process's ID
+// Return this process's ID
 int Process::Pid() { return pid_; }
 
-// DONE: Return this process's CPU utilization
+// Return this process's CPU utilization
 float Process::CpuUtilization() {
     long uptime = LinuxParser::UpTime();
     long total_time = LinuxParser::ActiveJiffies(pid_);
@@ -28,17 +28,18 @@ float Process::CpuUtilization() {
     return cpu_usage_;
 }
 
-// DONE: Return the command that generated this process
+// Return the command that generated this process
 string Process::Command() { return cmd_; }
 
-// DONE: Return this process's memory utilization
+// Return this process's memory utilization
 string Process::Ram() { return LinuxParser::Ram(pid_); }
 
-// DONE: Return the user (name) that generated this process
+// Return the user (name) that generated this process
 string Process::User() { return user_; }
 
-// DONE: Return the age of this process (in seconds)
+// Return the age of this process (in seconds)
 long int Process::UpTime() { return LinuxParser::UpTime(pid_); }
 
-// DONE: Overload the "less than" comparison operator for Process objects
+// Overload the "less than" comparison operator for Process objects,
+// to sort processes in descending order of CPU usage
 bool Process::operator<(Process const& a) const { return cpu_usage_ > a.cpu_usage_; }
