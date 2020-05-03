@@ -30,6 +30,7 @@ string LinuxParser::OperatingSystem() {
       }
     }
   }
+  filestream.close();
   return value;
 }
 
@@ -43,6 +44,7 @@ string LinuxParser::Kernel() {
     std::istringstream linestream(line);
     linestream >> os >> version >> kernel;
   }
+  stream.close();
   return kernel;
 }
 
@@ -58,7 +60,7 @@ vector<int> LinuxParser::Pids() {
       string filename(file->d_name);
       if (std::all_of(filename.begin(), filename.end(), isdigit)) {
         int pid = stoi(filename);
-        pids.push_back(pid);
+        pids.emplace_back(pid);
       }
     }
   }
@@ -86,6 +88,7 @@ float LinuxParser::MemoryUtilization() {
       }
     }
   }
+  filestream.close();
   return 0.0;
 }
 
@@ -100,6 +103,7 @@ long LinuxParser::UpTime() {
     linestream >> uptime;
     return std::stoi(uptime);
   }
+  stream.close();
   return 0;
 }
 
@@ -129,6 +133,7 @@ long LinuxParser::ActiveJiffies(int pid) {
     // see https://stackoverflow.com/a/16736599
     return long{ (utime + stime + cutime + cstime) / sysconf(_SC_CLK_TCK) };
   }
+  stream.close();
   return 0;
 }
 
@@ -146,10 +151,11 @@ long LinuxParser::ActiveJiffies() {
     // in user and nice, see https://stackoverflow.com/a/23376195)   
     return std::stoi(user) + std::stoi(nice) + std::stoi(system) + std::stoi(irq) + std::stoi(softirq) + std::stoi(steal);
   }
+  stream.close();
   return 0;
 }
 
-// DONE: Read and return the number of idle jiffies for the system
+// Read and return the number of idle jiffies for the system
 long LinuxParser::IdleJiffies() {
   string cpu, user, nice, system, idle, iowait;
   string line;
@@ -160,6 +166,7 @@ long LinuxParser::IdleJiffies() {
     linestream >> cpu >> user >> nice >> system >> idle >> iowait;
     return std::stoi(idle) + std::stoi(iowait);
   }
+  stream.close();
   return 0;
 }
 
@@ -178,6 +185,7 @@ int LinuxParser::TotalProcesses() {
         return std::stoi(value);
     }
   }
+  filestream.close();
   return 0;
 }
 
@@ -195,6 +203,7 @@ int LinuxParser::RunningProcesses() {
         return std::stoi(value);
     }
   }
+  filestream.close();
   return 0;
 }
 
@@ -206,6 +215,7 @@ string LinuxParser::Command(int pid) {
     std::getline(stream, line);
     return line;
   }
+  stream.close();
   return line;
 }
 
@@ -219,12 +229,15 @@ string LinuxParser::Ram(int pid) {
     while (std::getline(filestream, line)) {
       std::istringstream linestream(line);
       while (linestream >> key >> value) {
-        if (key == "VmSize:") {
+        // Vmsize is the sum of all the virtual memory,
+        // VmData is the exact physical memory being used.
+        if (key == "VmData:") {
           return to_string(std::stoi(value) / 1024);  // KB to MB
         }
       }
     }
   }
+  filestream.close();
   return value;
 }
 
@@ -244,6 +257,7 @@ string LinuxParser::Uid(int pid) {
       }
     }
   }
+  filestream.close();
   return value;
 }
 
@@ -266,6 +280,7 @@ string LinuxParser::User(int pid) {
       }
     }
   }
+  filestream.close();
   return key;
 }
 
@@ -280,5 +295,6 @@ long LinuxParser::UpTime(int pid) {
     for(int i=1; i<=22; i++) { linestream >> value; }
     return long{ std::stoi(value) / sysconf(_SC_CLK_TCK) };
   }
+  stream.close();
   return 0;
 }
